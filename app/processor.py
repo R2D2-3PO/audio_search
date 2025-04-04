@@ -6,6 +6,8 @@ from tqdm import tqdm
 from .ftp_client import FTPClient
 from .config import Config
 import ollama
+from collections import Counter
+import re
 
 class AudioProcessor:
     def __init__(self):
@@ -72,16 +74,11 @@ class AudioProcessor:
         return audio_data
 
     def translate_to_keywords(self, chinese_input):
-        """使用 Ollama 将中文转换为英文搜索关键词"""
         try:
-            # 调用本地 Ollama 服务
             response = ollama.chat(
-                model="llama3.2:1b",  # 替换为你安装的模型名称
+                model="llama3",
                 messages=[
-                    {
-                        "role": "user",
-                        "content": f"将以下中文短语转换为适合搜索的英文关键词（简洁且相关）：{chinese_input}"
-                    }
+                    {"role": "user", "content": f"将以下中文短语转换为适合搜索的英文关键词（简洁且相关）：{chinese_input}"}
                 ]
             )
             keywords = response["message"]["content"].strip()
@@ -89,4 +86,37 @@ class AudioProcessor:
             return keywords
         except Exception as e:
             logging.error(f"Failed to translate '{chinese_input}': {e}")
-            return chinese_input  # 如果失败，返回原输入作为 fallback
+            return chinese_input
+
+    def generate_synonym_table(self, audio_data, top_n=10):
+        """从文件元数据生成近义词表"""
+        # 提取文件名中的单词
+        all_words = []
+        for item in audio_data:
+            # 简单分词：按空格、连字符、下划线分割，去除数字和扩展名
+            words = re.split(r'[\s\-_]+', item["file_name"].lower().replace(".wav", ""))
+            all_words.extend([w for w in words if w.isalpha() and len(w) > 2])
+
+        # 统计高频词
+        word_freq = Counter(all_words)
+        top_words = [word for word, _ in word_freq.most_common(top_n)]
+        logging.info(f"Top {top_n} frequent words: {top_words}")
+
+        # 使用 Ollama 生成近义词
+        synonym_table = []
+        for word in top_words:
+            try:
+                response = ollama.chat(
+                    model="llama3",
+                    messages=[
+                        {"role": "user", "content": f"Provide synonyms for '{word}' in English (comma-separated)."}
+                    ]
+                )
+                synonyms = response["message"]["content"].strip()
+                synonym_entry = f"{word} => {synonyms}"
+                synonym_table.append(synonym_entry)
+                logging.info(f"Generated synonym: {synonym_entry}")
+            except Exception as e:
+                logging.error(f"Failed to generate synonyms for '{word}': {e}")
+
+        return synonym_table

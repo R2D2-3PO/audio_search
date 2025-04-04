@@ -8,4 +8,4 @@ class Config:
     CACHE_FILE = "cache/audio_cache.json"
     LOG_FILE = "logs/app.log"
     FLASK_HOST = "127.0.0.1"
-    FLASK_PORT = 5001
+    FLASK_PORT = 5002
