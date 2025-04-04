@@ -1,0 +1,18 @@
+# 忽略缓存和日志文件
+cache/
+logs/
+
+# 忽略 Python 编译文件
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 忽略虚拟环境
+venv/
+env/
+.venv/
+
+# 忽略 IDE 文件
+.idea/
+*.iml
