@@ -1,5 +1,5 @@
 class Config:
-    FTP_HOST = "10.1.2.230"
+    FTP_HOST = "ftp://192.168.106.160"
     FTP_USER = "anonymous"
     FTP_PASS = ""
     FTP_ROOT = "/"
