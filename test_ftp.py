@@ -9,10 +9,10 @@ es = Elasticsearch(["http://localhost:9200"])
 index_name = "audio_files"
 
 # FTP 配置
-FTP_HOST = "10.1.2.230"
-FTP_USER = "anonymous"
-FTP_PASS = ""
-FTP_ROOT = "/"  # 从根目录开始递归
+FTP_HOST = "192.168.100.99"
+FTP_USER = "ai"
+FTP_PASS = "Dykys#Gaoxin#10099"
+FTP_ROOT = "/media/ai/sound_effects"  # 从根目录开始递归
 
 
 def connect_ftp():
@@ -25,14 +25,26 @@ def connect_ftp():
 def test_ftp_connection():
     ftp = connect_ftp()
     print(f"Connected to {FTP_HOST}, current dir: {ftp.pwd()}")
+
+    # 切换到 FTP_ROOT 目录
+    try:
+        ftp.cwd(FTP_ROOT)
+        print(f"Changed directory to: {ftp.pwd()}")
+    except Exception as e:
+        print(f"Failed to change directory to {FTP_ROOT}: {e}")
+        ftp.quit()
+        return
+
+    # 列出当前目录内容
     lines = []
     ftp.retrlines('LIST', lines.append)
-    print("Directory listing:")
+    print(f"Directory listing for {FTP_ROOT}:")
     for line in lines:
         print(line)
+
     ftp.quit()
 
-# 在 main() 之前调用
+
 def main():
     test_ftp_connection()
 

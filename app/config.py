@@ -1,8 +1,8 @@
 class Config:
-    FTP_HOST = "ftp://192.168.106.160"
-    FTP_USER = "anonymous"
-    FTP_PASS = ""
-    FTP_ROOT = "/"
+    FTP_HOST = "ftp://192.168.100.99"
+    FTP_USER = "ai"
+    FTP_PASS = "Dykys#Gaoxin#10099"
+    FTP_ROOT = "/media/ai/sound_effects"
     ES_HOSTS = ["http://localhost:9200"]
     INDEX_NAME = "audio_files"
     CACHE_FILE = "cache/audio_cache.json"

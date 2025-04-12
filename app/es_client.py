@@ -45,16 +45,13 @@ class ESClient:
         logging.info(f"Created index {self.index_name} with synonym support")
 
     def index_data(self, data):
-        actions = [
-            {
-                "_index": self.index_name,
-                "_id": i,
-                "_source": item
-            }
-            for i, item in enumerate(data) if item
-        ]
-        bulk(self.es, actions)
-        logging.info(f"Indexed {len(data)} audio files")
+        try:
+            actions = [{"_index": self.index_name, "_id": i, "_source": item} for i, item in enumerate(data) if item]
+            bulk(self.es, actions)
+            logging.info(f"Indexed {len(data)} audio files")
+        except Exception as e:
+            logging.error(f"Indexing failed: {e}", exc_info=True)
+            raise
 
     def search(self, query, size=20, sort_by="size", order="asc"):
         body = {

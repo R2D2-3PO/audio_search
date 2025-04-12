@@ -77,7 +77,7 @@ def init_routes(app):
                     <div class="result">
                         <strong>{{ result.file_name }}</strong><br>
                         Path: {{ result.ftp_path }}<br>
-                        Size: {{ result.size }} bytes<br>
+                         Size: {{ result.size }} bytes<br>
                         Modified: {{ result.modified }}
                     </div>
                 {% endfor %}
