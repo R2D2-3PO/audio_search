@@ -8,7 +8,7 @@ def main():
     processor = AudioProcessor()
     logging.info("Starting file processing...")
     audio_files = processor.process_files()
-    logging.info(f"Processed {len(audio_files)} files")
+    logging.info(f"Processed {len(audio_files)} files: {audio_files}")  # 添加详细日志
 
     logging.info("Generating synonym table...")
     synonym_table = processor.generate_synonym_table(audio_files, top_n=10)

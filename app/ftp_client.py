@@ -4,9 +4,14 @@ from .config import Config
 
 class FTPClient:
     def __init__(self):
-        self.ftp = FTP(Config.FTP_HOST)
-        self.ftp.encoding = "gbk"
-        self.ftp.login(Config.FTP_USER, Config.FTP_PASS)
+        try:
+            self.ftp = FTP('192.168.100.99')  # 去掉 ftp:// 前缀
+            self.ftp.encoding = "gbk"
+            self.ftp.login(Config.FTP_USER, Config.FTP_PASS)
+            logging.info("FTP connection established")
+        except Exception as e:
+            logging.error(f"FTP connection failed: {e}")
+            raise
 
     def list_dir(self, dir_path):
         files = []
@@ -15,6 +20,9 @@ class FTPClient:
         try:
             self.ftp.cwd(dir_path)
             items = self.ftp.nlst()
+        except UnicodeDecodeError as e:
+            logging.error(f"Encoding error in {dir_path}: {e}")
+            return files
         except Exception as e:
             logging.error(f"Error accessing {dir_path}: {e}")
             return files

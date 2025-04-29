@@ -5,10 +5,16 @@ from .config import Config
 
 class ESClient:
     def __init__(self, synonyms=None):
-        self.es = Elasticsearch(Config.ES_HOSTS)
-        self.index_name = Config.INDEX_NAME
-        self.synonyms = synonyms or []
-        self._ensure_index()
+        try:
+            self.es = Elasticsearch(Config.ES_HOSTS, timeout=10)
+            if not self.es.ping():
+                raise ConnectionError("Failed to connect to Elasticsearch")
+            self.index_name = Config.INDEX_NAME
+            self.synonyms = synonyms or []
+            self._ensure_index()
+        except Exception as e:
+            logging.error(f"Elasticsearch initialization failed: {e}")
+            raise
 
     def _ensure_index(self):
         if self.es.indices.exists(index=self.index_name):
